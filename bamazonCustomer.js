@@ -65,28 +65,32 @@ function itemToBuy() {
                     department: res[i].department_name,
                     stock_quantity: res[i].stock_quantity
                 })
-                    quantity();
-               
+                quantity();
+
                 function quantity() {
-                    if (stock >= 1 ){
-                    inquirer.prompt({
-                        name: "stock_quantity",
-                        type: "input",
-                        message: "Please enter the quantity you would like to buy"
-                    }).then(function (data) {
-                        data = parseInt(data.stock_quantity)
-                        console.log(stock)
-                        console.log("you are buying " + data + " " + product + "s")
-                        var query = "UPDATE products SET stock_quantity = (stock_quantity - " + data + ") WHERE id =" + selected;
-                        // console.log(query)
-                        connection.query(query, function (err, res) {
-                           
-                            // if (data.stock_quantity === 0)
-                            // console.log("there is not enough" + product + "s left")
-                        
+                    if (stock >= 1) {
+                        inquirer.prompt({
+                            name: "stock_quantity",
+                            type: "input",
+                            message: "Please enter the quantity you would like to buy"
+                        }).then(function (data) {
+                            data = parseInt(data.stock_quantity)
+                            console.log(stock)
+                            if (data <= stock) {
+                                console.log("you are buying " + data + " " + product + "s")
+
+                                var query = "UPDATE products SET stock_quantity = (stock_quantity - " + data + ") WHERE id =" + selected;
+                                // console.log(query)
+                                connection.query(query, function (err, res) {
+
+                                    // if (data.stock_quantity === 0)
+                                    // console.log("there is not enough" + product + "s left")
+
+                                })
+                            } else console.log("Sorry there is not enough " + product + "s in our inventory please select a lower quantity or try again later")
                         })
-                    })
-                }else console.log("there is not enough "+ product +"s in our inventory")
+
+                    } else console.log("Sorry there is not enough " + product + "s in our inventory")
                 }
             }
         })
