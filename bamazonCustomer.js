@@ -8,6 +8,7 @@ var connection = mysql.createConnection({
     password: "root",
     database: "bamazon_DB"
 });
+
 // first connection for start 
 connection.connect(function (err) {
     if (err) throw err;
@@ -58,53 +59,43 @@ function itemToBuy() {
                 // res.push({ id: res[i].id, product: res[i].product_name, department: res[i].department_name })
                 var product = res[i].product_name;
                 var stock = res[i].stock_quantity;
-                console.log(product)
+                var cost = res[i].price;
+                var department =  res[i].department_name;
+                var id = res[i].id;
+                
+                // console.log(product)
                 console.log({
-                    id: res[i].id,
-                    product: res[i].product_name,
-                    department: res[i].department_name,
-                    stock_quantity: res[i].stock_quantity
+                    id: id,
+                    product: product,
+                    department: department,
+                    stock_quantity: stock
                 })
                 quantity();
 
                 function quantity() {
+                    // if for if there is not enough in the stock
                     if (stock >= 1) {
                         inquirer.prompt({
                             name: "stock_quantity",
                             type: "input",
-                            message: "Please enter the quantity you would like to buy"
+                            message: "Please enter the number of units you would like to buy"
                         }).then(function (data) {
                             data = parseInt(data.stock_quantity)
-                            console.log(stock)
+                            // console.log(stock)
+                            // if statement for if the choose to much of an item
                             if (data <= stock) {
+                                total = data * cost
                                 console.log("you are buying " + data + " " + product + "s")
-
+                                console.log("Your total is $"+ total)
                                 var query = "UPDATE products SET stock_quantity = (stock_quantity - " + data + ") WHERE id =" + selected;
                                 // console.log(query)
-                                connection.query(query, function (err, res) {
-
-                                    // if (data.stock_quantity === 0)
-                                    // console.log("there is not enough" + product + "s left")
-
-                                })
+                                connection.query(query, function (err, res) {})
                             } else console.log("Sorry there is not enough " + product + "s in our inventory please select a lower quantity or try again later")
                         })
-
                     } else console.log("Sorry there is not enough " + product + "s in our inventory")
                 }
             }
         })
     });
 }
-// function quantity() {
-//     inquirer.prompt({
-//         name: "stock_quantity",
-//         type: "input",
-//         message: "Please enter the quantity you would like to buy"
-//     }).then(function (data) {
-//         data = parseInt(data.stock_quantity)
-//         console.log(data)
-//         var query = "UPDATE products SET stock_quantity = (stock_quantity - "+data+"where id ="
-//         connection.query(query)
-//     })
-// }
+
